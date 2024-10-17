@@ -10,28 +10,28 @@ import { Container } from "~/components/container";
 export default function Sobre() {
   return (
     <Container title="Informações sobre o projeto">
-      <div className="flex flex-col gap-4 bg-white px-4 py-3 font-sans sm:p-10">
+      <div className="flex flex-col gap-4 bg-white py-3 font-sans sm:p-10">
         <p>A ser preenchido.</p>
         <h2 className="text-xl font-bold">Financiadores</h2>
         <p>A ser preenchido.</p>
         <h2 className="text-xl font-bold">Contato</h2>
         <ul className="flex flex-col gap-5">
           <li className="flex gap-3">
-            <TbBrandInstagram size="2.5rem" />
+            <TbBrandInstagram size="2.5rem" className="min-w-[2.5rem]" />
             <div className="flex flex-col justify-center">
               <b>Instagram:</b>
               <a
                 className="text-cyan-600 hover:underline"
-                href="https://www.instagram.com/lppfb.ufms/"
+                href="https://www.instagram.com/lppfb_ufms/"
                 target="_blank"
                 rel="noreferrer"
               >
-                @lppfb.ufms
+                @lppfb_ufms
               </a>
             </div>
           </li>
           <li className="flex gap-3">
-            <TbBrandX size="2.5rem" />
+            <TbBrandX size="2.5rem" className="min-w-[2.5rem]" />
             <div className="flex flex-col justify-center">
               <b>X (anteriormente conhecido como Twitter):</b>
               <a
@@ -45,7 +45,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbBrandLinkedin size="2.5rem" />
+            <TbBrandLinkedin size="2.5rem" className="min-w-[2.5rem]" />
             <div className="flex flex-col justify-center">
               <b>LinkedIn:</b>
               <a
@@ -59,7 +59,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbMapPin size="2.5rem" />
+            <TbMapPin size="2.5rem" className="min-w-[2.5rem]" />
             <div className="flex flex-col">
               <b>Endereço:</b>
               <p>
@@ -73,7 +73,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbMail size="2.5rem" />
+            <TbMail size="2.5rem" className="min-w-[2.5rem]" />
             <div className="flex flex-col justify-center">
               <b>Email:</b>
               <a
