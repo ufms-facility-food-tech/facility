@@ -22,13 +22,13 @@ export default function Perfil() {
       <div className="grid grid-cols-2 gap-x-2">
         {" "}
         {/* Added gap-x-2 for horizontal spacing between columns */}
-        <span className="font-bold text-cyan-600 justify-self-end">Nome: </span>
+        <span className="justify-self-end font-bold text-cyan-600">Nome: </span>
         <span>{user.displayName}</span>
-        <span className="font-bold text-cyan-600 justify-self-end">
+        <span className="justify-self-end font-bold text-cyan-600">
           Email:{" "}
         </span>
         <span>{user.email}</span>
-        <span className="font-bold text-cyan-600 justify-self-end">
+        <span className="justify-self-end font-bold text-cyan-600">
           Data de criação de conta:{" "}
         </span>
         <span>
@@ -36,16 +36,16 @@ export default function Perfil() {
             dateStyle: "long",
           }).format(new Date(user.createdAt))}
         </span>
-        <span className="font-bold text-cyan-600 justify-self-end">
+        <span className="justify-self-end font-bold text-cyan-600">
           Email verificado:
         </span>
         {user.emailVerified ? (
-          <TbShieldCheckFilled className="self-center text-cyan-600 size-4" />
+          <TbShieldCheckFilled className="size-4 self-center text-cyan-600" />
         ) : (
-          <TbShieldX className="self-center text-red-800 size-4" />
+          <TbShieldX className="size-4 self-center text-red-800" />
         )}
       </div>
-      <div className="flex flex-col items-center justify-center mx-2 mt-12 gap-6">
+      <div className="mx-2 mt-12 flex flex-col items-center justify-center gap-6">
         {!user.emailVerified ? (
           <Link
             to="/verify-email"
@@ -88,8 +88,8 @@ export default function Perfil() {
         </Form>
       </div>
       {user.isAdmin && user.emailVerified && (
-        <div className="h-full border-t-2 border-neutral-100 mt-6">
-          <div className="flex flex-col items-center justify-center mx-2 mt-6 gap-6">
+        <div className="mt-6 h-full border-t-2 border-neutral-100">
+          <div className="mx-2 mt-6 flex flex-col items-center justify-center gap-6">
             <Link
               prefetch="intent"
               to="/admin"

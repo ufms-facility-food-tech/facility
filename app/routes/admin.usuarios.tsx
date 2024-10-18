@@ -61,13 +61,13 @@ export default function Usuarios() {
 
   return (
     <>
-      <h1 className="text-xl text-center mb-4 font-bold text-cyan-600">
+      <h1 className="mb-4 text-center text-xl font-bold text-cyan-600">
         Usuários
       </h1>
       <ul className="flex flex-col gap-8">
         {users.map(
           ({ id, displayName, email, emailVerified, createdAt, isAdmin }) => (
-            <li key={id} className="bg-neutral-100 p-4 rounded-lg">
+            <li key={id} className="rounded-lg bg-neutral-100 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-1">
                   <p className="text-cyan-600">
@@ -109,7 +109,7 @@ export default function Usuarios() {
                     {isAdmin ? (
                       <button
                         type="button"
-                        className="text-center flex w-min items-center gap-2 rounded-2xl bg-gradient-to-r from-neutral-600 to-neutral-700 py-1 pl-2 pr-4 text-sm font-bold text-white"
+                        className="flex w-min items-center gap-2 rounded-2xl bg-gradient-to-r from-neutral-600 to-neutral-700 py-1 pl-2 pr-4 text-center text-sm font-bold text-white"
                         onClick={() =>
                           fetcher.submit(
                             {
@@ -127,7 +127,7 @@ export default function Usuarios() {
                     ) : (
                       <button
                         type="button"
-                        className=" text-center flex w-min items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-600 to-cyan-500 py-1 pl-2 pr-4 text-sm font-bold text-white"
+                        className="flex w-min items-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-600 to-cyan-500 py-1 pl-2 pr-4 text-center text-sm font-bold text-white"
                         onClick={() =>
                           fetcher.submit(
                             {

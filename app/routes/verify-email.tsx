@@ -101,7 +101,7 @@ export default function VerifyEmail() {
         />
         <FormErrorMessage errors={fields.code.errors} />
         {/* link to resend email */}
-        <p className="text-center text-sm text-neutral-700 flex gap-1">
+        <p className="flex gap-1 text-center text-sm text-neutral-700">
           Não recebeu o código de verificação?
           <button
             type="reset"
