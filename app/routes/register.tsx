@@ -5,18 +5,19 @@ import { parseWithValibot } from "conform-to-valibot";
 import { count, eq, gte } from "drizzle-orm";
 import { generateIdFromEntropySize } from "lucia";
 import {
+  email,
   forward,
   minLength,
   object,
   partialCheck,
   pipe,
-  regex,
   setSpecificMessage,
   string,
 } from "valibot";
-import { auth } from "~/.server/auth";
+import { lucia, generateEmailVerificationCode } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
+import { transporter } from "~/.server/email";
 import { Container } from "~/components/container";
 import { FormErrorMessage, SubmitButton, TextInput } from "~/components/form";
 
@@ -24,7 +25,7 @@ setSpecificMessage(string, "Campo obrigatório");
 const schema = pipe(
   object({
     displayName: string(),
-    email: pipe(string(), regex(/.+@.+/, "Email inválido")),
+    email: pipe(string(), email("Email inválido")),
     password: pipe(string(), minLength(8, "Mínimo de 8 caracteres")),
     confirmPassword: string(),
   }),
@@ -78,10 +79,17 @@ export async function action({ request }: ActionFunctionArgs) {
     passwordHash,
   });
 
-  const session = await auth.createSession(userId, {});
-  const sessionCookie = auth.createSessionCookie(session.id);
+  const verificationCode = await generateEmailVerificationCode(userId, email);
+  await transporter.sendMail({
+    to: email,
+    subject: "Verificação de email",
+    text: `Seu código de verificação é: ${verificationCode}. Válido por 15 minutos.`,
+  });
 
-  return redirect("/admin", {
+  const session = await lucia.createSession(userId, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+
+  return redirect("/verify-email", {
     headers: {
       "Set-Cookie": sessionCookie.serialize(),
     },

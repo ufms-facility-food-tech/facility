@@ -29,10 +29,10 @@ export default function Glossario() {
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-1">
                 <p className="text-cyan-600">{name}</p>
-                <blockquote className="text-sm italic text-neutral-500">
+                <blockquote className="text-sm italic text-neutral-700">
                   {definition}
                 </blockquote>
-                <p className="text-sm text-neutral-500">ex.: {example}</p>
+                <p className="text-sm text-neutral-700">ex.: {example}</p>
               </div>
               <div className="flex gap-2">
                 <Link
@@ -40,7 +40,7 @@ export default function Glossario() {
                   to={`edit/${id}`}
                   className="flex w-min items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 py-1 pl-2 pr-4 text-sm font-bold text-white"
                 >
-                  <TbPencil size="1.5rem" /> editar
+                  <TbPencil size="1.5rem" /> Editar
                 </Link>
                 <Form
                   action={`delete/${id}`}
@@ -58,7 +58,7 @@ export default function Glossario() {
                     type="submit"
                     className="flex w-min items-center gap-2 rounded-full bg-gradient-to-r from-red-800 to-red-700 py-1 pl-2 pr-4 text-sm font-bold text-white"
                   >
-                    <TbTrash size="1.5rem" /> apagar
+                    <TbTrash size="1.5rem" /> Apagar
                   </button>
                 </Form>
               </div>

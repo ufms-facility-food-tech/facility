@@ -27,7 +27,7 @@ export function TextInput({
 
   return (
     <label
-      className="flex flex-col text-cyan-600 aria-disabled:text-neutral-500"
+      className="flex flex-col text-cyan-600 aria-disabled:text-neutral-700"
       aria-disabled={props.disabled}
       htmlFor={props.id}
     >

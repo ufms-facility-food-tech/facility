@@ -16,10 +16,9 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import type { ReactNode } from "react";
-import { authMiddleware } from "~/.server/auth";
-import type { User } from "~/.server/db/schema";
 import { Container } from "~/components/container";
 import { Header } from "~/components/header";
+import { auth } from "~/.server/auth";
 
 export const links: LinksFunction = () => {
   return [
@@ -75,7 +74,7 @@ export function Layout({ children }: { children: ReactNode }) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return await authMiddleware(request);
+  return await auth(request);
 }
 
 export default function App() {
@@ -83,8 +82,8 @@ export default function App() {
 
   return (
     <>
-      <Header user={user as User} />
-      <Outlet context={{ user }} />
+      <Header user={user} />
+      <Outlet />
     </>
   );
 }

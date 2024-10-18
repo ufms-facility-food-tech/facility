@@ -1,14 +1,14 @@
 import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { eq } from "drizzle-orm";
-import { auth, authMiddleware } from "~/.server/auth";
+import { lucia, auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { peptideoTable } from "~/.server/db/schema";
 
 export async function action({ params, request }: ActionFunctionArgs) {
-  const { session } = await authMiddleware(request);
+  const { session, user } = await auth(request);
 
   if (!session) {
-    const sessionCookie = auth.createBlankSessionCookie();
+    const sessionCookie = lucia.createBlankSessionCookie();
     return redirect("/login", {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
@@ -16,13 +16,17 @@ export async function action({ params, request }: ActionFunctionArgs) {
     });
   }
 
-  if (session?.fresh) {
-    const sessionCookie = auth.createSessionCookie(session.id);
+  if (session.fresh) {
+    const sessionCookie = lucia.createSessionCookie(session.id);
     return redirect(request.url, {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
       },
     });
+  }
+
+  if (!user.isAdmin || !user.emailVerified) {
+    return redirect("/");
   }
 
   const id = params.id;
@@ -41,4 +45,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await db.delete(peptideoTable).where(eq(peptideoTable.id, item.id));
 
   return redirect("/admin/listar");
+}
+
+export async function loader() {
+  return redirect("/");
 }

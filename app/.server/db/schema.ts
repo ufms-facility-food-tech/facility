@@ -1,9 +1,8 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   integer,
   numeric,
-  pgEnum,
   pgTable,
   serial,
   text,
@@ -181,24 +180,29 @@ export const caracteristicasAdicionaisRelations = relations(
   }),
 );
 
-export const rolesEnum = pgEnum("roles", [
-  "read",
-  "update",
-  "insert",
-  "delete",
-  "admin",
-]);
-
 export const userTable = pgTable("user", {
   id: text("id").primaryKey(),
   displayName: text("display_name").notNull(),
   email: text("email").notNull().unique(),
   passwordHash: text("password_hash").notNull(),
-  role: rolesEnum("role").notNull().default("read"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  isAdmin: boolean("is_admin").notNull().default(false),
 });
 
 export type User = typeof userTable.$inferSelect;
+
+export const emailVerificationCodeTable = pgTable("email_verification_code", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull(),
+  email: text("email").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" })
+    .notNull()
+    .default(sql`now() + interval '15 minutes'`),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+});
 
 export const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),

@@ -11,7 +11,7 @@ import {
   useNavigate,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import { auth, authMiddleware } from "~/.server/auth";
+import { lucia, auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { imageMetadataTable } from "~/.server/db/schema";
 import { SubmitButton, TextInput } from "~/components/form";
@@ -30,10 +30,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const { session } = await authMiddleware(request);
+  const { session, user } = await auth(request);
 
   if (!session) {
-    const sessionCookie = auth.createBlankSessionCookie();
+    const sessionCookie = lucia.createBlankSessionCookie();
     return redirect("/login", {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
@@ -41,13 +41,17 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   }
 
-  if (session?.fresh) {
-    const sessionCookie = auth.createSessionCookie(session.id);
+  if (session.fresh) {
+    const sessionCookie = lucia.createSessionCookie(session.id);
     return redirect(request.url, {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
       },
     });
+  }
+
+  if (!user.isAdmin || !user.emailVerified) {
+    return redirect("/");
   }
 
   const formData = await request.formData();

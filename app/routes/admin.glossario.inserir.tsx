@@ -3,7 +3,7 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, redirect, useActionData, useNavigate } from "@remix-run/react";
 import { getValibotConstraint, parseWithValibot } from "conform-to-valibot";
 import { object, string } from "valibot";
-import { auth, authMiddleware } from "~/.server/auth";
+import { lucia, auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { glossarioTable } from "~/.server/db/schema";
 import { FormErrorMessage, SubmitButton, TextInput } from "~/components/form";
@@ -15,10 +15,10 @@ const schema = object({
 });
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { session } = await authMiddleware(request);
+  const { session, user } = await auth(request);
 
   if (!session) {
-    const sessionCookie = auth.createBlankSessionCookie();
+    const sessionCookie = lucia.createBlankSessionCookie();
     return redirect("/login", {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
@@ -26,13 +26,17 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  if (session?.fresh) {
-    const sessionCookie = auth.createSessionCookie(session.id);
+  if (session.fresh) {
+    const sessionCookie = lucia.createSessionCookie(session.id);
     return redirect(request.url, {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
       },
     });
+  }
+
+  if (!user.isAdmin || !user.emailVerified) {
+    return redirect("/");
   }
 
   const formData = await request.formData();
