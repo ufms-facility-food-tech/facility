@@ -27,7 +27,11 @@ migrate(
   { migrationsFolder: "./migrations" },
 );
 
-const db = drizzle({ connection: connectionOptions, casing: "snake_case", schema });
+const db = drizzle({
+  connection: connectionOptions,
+  casing: "snake_case",
+  schema,
+});
 
 await db.execute(sql`CREATE EXTENSION IF NOT EXISTS unaccent;`);
 

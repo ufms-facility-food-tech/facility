@@ -13,7 +13,7 @@ import {
 import { getValibotConstraint, parseWithValibot } from "conform-to-valibot";
 import { eq } from "drizzle-orm";
 import { email, object, pipe, string } from "valibot";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
 import { Container } from "~/components/container";

@@ -3,7 +3,7 @@ import type { ActionFunctionArgs } from "@remix-run/node";
 import { Form, redirect, useActionData, useNavigate } from "@remix-run/react";
 import { getValibotConstraint, parseWithValibot } from "conform-to-valibot";
 import { object, string } from "valibot";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { glossarioTable } from "~/.server/db/schema";
 import { FormErrorMessage, SubmitButton, TextInput } from "~/components/form";

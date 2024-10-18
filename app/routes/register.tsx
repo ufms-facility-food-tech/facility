@@ -14,7 +14,7 @@ import {
   setSpecificMessage,
   string,
 } from "valibot";
-import { lucia, generateEmailVerificationCode } from "~/.server/auth";
+import { generateEmailVerificationCode, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
 import { transporter } from "~/.server/email";

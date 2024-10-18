@@ -1,13 +1,13 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
-import { Lucia, TimeSpan, verifyRequestOrigin, type User } from "lucia";
+import { eq } from "drizzle-orm";
+import { Lucia, TimeSpan, type User, verifyRequestOrigin } from "lucia";
+import { alphabet, generateRandomString } from "oslo/crypto";
 import { db } from "~/.server/db/connection";
 import {
   emailVerificationCodeTable,
   sessionTable,
   userTable,
 } from "~/.server/db/schema";
-import { generateRandomString, alphabet } from "oslo/crypto";
-import { eq } from "drizzle-orm";
 
 const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
 

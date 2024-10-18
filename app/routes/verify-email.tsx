@@ -4,7 +4,7 @@ import { Form, redirect, useActionData, useFetcher } from "@remix-run/react";
 import { parseWithValibot } from "conform-to-valibot";
 import { eq } from "drizzle-orm";
 import { object, string } from "valibot";
-import { lucia, auth, verifyVerificationCode } from "~/.server/auth";
+import { auth, lucia, verifyVerificationCode } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
 import { Container } from "~/components/container";

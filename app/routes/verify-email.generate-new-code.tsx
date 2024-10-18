@@ -1,6 +1,6 @@
-import { redirect, type ActionFunctionArgs } from "@remix-run/node";
+import { type ActionFunctionArgs, redirect } from "@remix-run/node";
 import { eq } from "drizzle-orm";
-import { lucia, auth, generateEmailVerificationCode } from "~/.server/auth";
+import { auth, generateEmailVerificationCode, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { emailVerificationCodeTable } from "~/.server/db/schema";
 import { transporter } from "~/.server/email";

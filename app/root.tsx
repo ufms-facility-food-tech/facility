@@ -16,9 +16,9 @@ import type {
   MetaFunction,
 } from "@remix-run/node";
 import type { ReactNode } from "react";
+import { auth } from "~/.server/auth";
 import { Container } from "~/components/container";
 import { Header } from "~/components/header";
-import { auth } from "~/.server/auth";
 
 export const links: LinksFunction = () => {
   return [

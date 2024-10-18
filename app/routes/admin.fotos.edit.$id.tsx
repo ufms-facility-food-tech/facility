@@ -11,7 +11,7 @@ import {
   useNavigate,
 } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { imageMetadataTable } from "~/.server/db/schema";
 import { SubmitButton, TextInput } from "~/components/form";

@@ -32,7 +32,7 @@ import {
   string,
   transform,
 } from "valibot";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import {
   caracteristicasAdicionaisTable,

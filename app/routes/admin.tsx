@@ -8,7 +8,7 @@ import {
   TbLibraryPhoto,
   TbUsersGroup,
 } from "react-icons/tb";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { Container } from "~/components/container";
 
 export async function loader({ request }: LoaderFunctionArgs) {

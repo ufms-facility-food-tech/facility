@@ -1,6 +1,6 @@
 import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { eq } from "drizzle-orm";
-import { lucia, auth } from "~/.server/auth";
+import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { glossarioTable } from "~/.server/db/schema";
 
