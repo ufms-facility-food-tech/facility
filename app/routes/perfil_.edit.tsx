@@ -72,11 +72,26 @@ export async function action({ request }: ActionFunctionArgs) {
     return submission.reply();
   }
 
+  const sameEmail = user.email === submission.value.email;
+
+  if (!sameEmail) {
+    const emailUsed = await db.$count(
+      userTable,
+      eq(userTable.email, submission.value.email),
+    );
+
+    if (emailUsed !== 0) {
+      return submission.reply({
+        fieldErrors: { email: ["Email já utilizado"] },
+      });
+    }
+  }
+
   await db
     .update(userTable)
     .set({
       ...submission.value,
-      emailVerified: user.email === submission.value.email,
+      emailVerified: sameEmail,
     })
     .where(eq(userTable.id, user.id));
 

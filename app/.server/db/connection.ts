@@ -13,7 +13,6 @@ const connectionOptions = {
   user: process.env.PGUSER || "postgres",
   password: process.env.PGPASSWORD,
   database: process.env.PGDATABASE,
-  ssl: process.env.NODE_ENV === "production",
 };
 
 migrate(

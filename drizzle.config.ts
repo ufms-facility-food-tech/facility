@@ -10,7 +10,6 @@ export default defineConfig({
     database: process.env.PGDATABASE || "postgres",
     host: process.env.PGHOST || "localhost",
     port: Number(process.env.PGPORT || 5432),
-    ssl: process.env.NODE_ENV === "production",
   },
   casing: "snake_case",
 });
