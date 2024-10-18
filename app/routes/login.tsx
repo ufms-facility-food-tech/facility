@@ -1,9 +1,9 @@
 import { getFormProps, getInputProps, useForm } from "@conform-to/react";
 import { type ActionFunctionArgs, redirect } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { parseWithValibot } from "conform-to-valibot";
 import { eq } from "drizzle-orm";
-import { object, pipe, regex, string } from "valibot";
+import { email, object, pipe, string } from "valibot";
 import { lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
@@ -14,10 +14,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const submission = parseWithValibot(formData, {
     schema: object({
-      email: pipe(
-        string("Campo obrigatório"),
-        regex(/.+@.+/, "Email inválido"),
-      ),
+      email: pipe(string("Campo obrigatório"), email("Email inválido")),
       password: string("Campo obrigatório"),
     }),
   });
@@ -57,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const session = await lucia.createSession(user.id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
 
-  return redirect("/admin", {
+  return redirect("/", {
     headers: {
       "Set-Cookie": sessionCookie.serialize(),
     },
@@ -87,15 +84,18 @@ export default function Entrar() {
           {...getInputProps(fields.email, { type: "email" })}
         />
         <FormErrorMessage errors={fields.email.errors} />
-        <div>
+        <div className="flex flex-col gap-2">
           <TextInput
             label="Senha"
             autoComplete="current-password"
             {...getInputProps(fields.password, { type: "password" })}
           />
-          <div className="mx-2 mt-1 text-end text-cyan-600 underline">
+          <Link
+            to="/password-reset"
+            className="mx-2 mt-2 text-cyan-600 hover:underline self-center"
+          >
             Esqueceu a senha?
-          </div>
+          </Link>
         </div>
         <FormErrorMessage errors={fields.password.errors} />
         <FormErrorMessage errors={form.errors} />
