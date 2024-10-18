@@ -20,6 +20,8 @@ services:
       - PGPASSWORD=${PGPASSWORD}
       - PGDATABASE=${PGDATABASE}
       - NODE_ENV=production
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     volumes:
       - ./public/images/upload:/srv/client/images/upload
 
