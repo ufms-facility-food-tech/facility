@@ -215,6 +215,16 @@ export const sessionTable = pgTable("session", {
   }).notNull(),
 });
 
+export const passwordResetTokenTable = pgTable("password_reset_token", {
+  tokenHash: text("token_hash").notNull().unique(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => userTable.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true, mode: "date" })
+    .notNull()
+    .default(sql`now() + interval '30 minutes'`),
+});
+
 export const imageMetadataTable = pgTable("image_metadata", {
   id: serial("id").primaryKey(),
   fileName: text("file_name").notNull().unique(),

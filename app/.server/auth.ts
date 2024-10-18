@@ -1,10 +1,18 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
 import { eq } from "drizzle-orm";
-import { Lucia, TimeSpan, type User, verifyRequestOrigin } from "lucia";
-import { alphabet, generateRandomString } from "oslo/crypto";
+import {
+  generateIdFromEntropySize,
+  Lucia,
+  TimeSpan,
+  type User,
+  verifyRequestOrigin,
+} from "lucia";
+import { alphabet, generateRandomString, sha256 } from "oslo/crypto";
+import { encodeHex } from "oslo/encoding";
 import { db } from "~/.server/db/connection";
 import {
   emailVerificationCodeTable,
+  passwordResetTokenTable,
   sessionTable,
   userTable,
 } from "~/.server/db/schema";
@@ -79,6 +87,19 @@ export async function verifyVerificationCode(
     return false;
   }
   return true;
+}
+
+export async function createPasswordResetToken(userId: string): Promise<string> {
+  await db
+    .delete(passwordResetTokenTable)
+    .where(eq(passwordResetTokenTable.userId, userId));
+  const tokenId = generateIdFromEntropySize(25); // 40 character
+  const tokenHash = encodeHex(await sha256(new TextEncoder().encode(tokenId)));
+  await db.insert(passwordResetTokenTable).values({
+    tokenHash,
+    userId,
+  });
+  return tokenId;
 }
 
 export async function auth(request: Request) {
