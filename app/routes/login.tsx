@@ -92,7 +92,7 @@ export default function Entrar() {
           />
           <Link
             to="/password-reset"
-            className="mx-2 mt-2 text-cyan-600 hover:underline self-center"
+            className="mx-2 mt-2 self-center text-cyan-600 hover:underline"
           >
             Esqueceu a senha?
           </Link>
