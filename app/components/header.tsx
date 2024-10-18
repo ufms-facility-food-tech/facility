@@ -1,8 +1,8 @@
 import { Form, NavLink } from "@remix-run/react";
+import type { User } from "lucia";
 import { TbLogin, TbLogout, TbUserCircle, TbUserPlus } from "react-icons/tb";
-import type { User } from "~/.server/db/schema";
 
-export function Header({ user }: { user: User | null }) {
+export function Header({ user }: { user: Pick<User, "displayName"> | null }) {
   return (
     <header>
       <div className="min-h-26 flex items-center justify-between bg-white px-4">
@@ -20,7 +20,7 @@ export function Header({ user }: { user: User | null }) {
           <div className="my-6 flex flex-wrap justify-end gap-3">
             <NavLink
               prefetch="intent"
-              to="/admin"
+              to="/perfil"
               className="flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 px-6 py-2 text-lg font-bold text-white"
             >
               {user.displayName as string} <TbUserCircle size="2rem" />

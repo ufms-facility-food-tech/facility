@@ -8,14 +8,14 @@ import {
   TbLibraryPhoto,
   TbUsersGroup,
 } from "react-icons/tb";
-import { auth, authMiddleware } from "~/.server/auth";
+import { lucia, auth } from "~/.server/auth";
 import { Container } from "~/components/container";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { session } = await authMiddleware(request);
+  const { session, user } = await auth(request);
 
   if (!session) {
-    const sessionCookie = auth.createBlankSessionCookie();
+    const sessionCookie = lucia.createBlankSessionCookie();
     return redirect("/login", {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
@@ -23,13 +23,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     });
   }
 
-  if (session?.fresh) {
-    const sessionCookie = auth.createSessionCookie(session.id);
+  if (session.fresh) {
+    const sessionCookie = lucia.createSessionCookie(session.id);
     return redirect(request.url, {
       headers: {
         "Set-Cookie": sessionCookie.serialize(),
       },
     });
+  }
+
+  if (!user.isAdmin || !user.emailVerified) {
+    return redirect("/");
   }
 
   return null;

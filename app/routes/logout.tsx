@@ -1,16 +1,16 @@
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/react";
-import { auth } from "~/.server/auth";
+import { lucia } from "~/.server/auth";
 
 export async function action({ request }: ActionFunctionArgs) {
   const cookieHeader = request.headers.get("Cookie");
-  const sessionId = auth.readSessionCookie(cookieHeader ?? "");
+  const sessionId = lucia.readSessionCookie(cookieHeader ?? "");
   if (!sessionId) {
     return redirect("/login");
   }
 
-  await auth.invalidateSession(sessionId);
-  const sessionCookie = auth.createBlankSessionCookie();
+  await lucia.invalidateSession(sessionId);
+  const sessionCookie = lucia.createBlankSessionCookie();
   return redirect("/login", {
     headers: {
       "Set-Cookie": sessionCookie.serialize(),

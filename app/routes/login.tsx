@@ -4,7 +4,7 @@ import { Form, useActionData } from "@remix-run/react";
 import { parseWithValibot } from "conform-to-valibot";
 import { eq } from "drizzle-orm";
 import { object, pipe, regex, string } from "valibot";
-import { auth } from "~/.server/auth";
+import { lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { userTable } from "~/.server/db/schema";
 import { Container } from "~/components/container";
@@ -54,8 +54,8 @@ export async function action({ request }: ActionFunctionArgs) {
     });
   }
 
-  const session = await auth.createSession(user.id, {});
-  const sessionCookie = auth.createSessionCookie(session.id);
+  const session = await lucia.createSession(user.id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
 
   return redirect("/admin", {
     headers: {

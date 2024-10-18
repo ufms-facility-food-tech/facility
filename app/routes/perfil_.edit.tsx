@@ -12,33 +12,15 @@ import {
 } from "@remix-run/react";
 import { getValibotConstraint, parseWithValibot } from "conform-to-valibot";
 import { eq } from "drizzle-orm";
-import { object, string } from "valibot";
-import { auth, lucia } from "~/.server/auth";
+import { email, object, pipe, string } from "valibot";
+import { lucia, auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
-import { glossarioTable } from "~/.server/db/schema";
+import { userTable } from "~/.server/db/schema";
+import { Container } from "~/components/container";
 import { FormErrorMessage, SubmitButton, TextInput } from "~/components/form";
 
-export async function loader({ params }: LoaderFunctionArgs) {
-  const { id } = params;
-
-  const item = await db.query.glossarioTable.findFirst({
-    where: eq(glossarioTable.id, Number(id)),
-  });
-  if (!item) {
-    return redirect("/admin/glossario");
-  }
-
-  return item;
-}
-
-const schema = object({
-  name: string(),
-  definition: string(),
-  example: string(),
-});
-
-export async function action({ request, params }: ActionFunctionArgs) {
-  const { session, user } = await auth(request);
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { user, session } = await auth(request);
 
   if (!session) {
     const sessionCookie = lucia.createBlankSessionCookie();
@@ -58,12 +40,32 @@ export async function action({ request, params }: ActionFunctionArgs) {
     });
   }
 
-  if (!user.isAdmin || !user.emailVerified) {
-    return redirect("/");
+  return {
+    user: {
+      displayName: user.displayName,
+      email: user.email,
+    },
+  };
+}
+
+const schema = object({
+  displayName: string(),
+  email: pipe(string(), email()),
+});
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { user } = await auth(request);
+
+  if (!user) {
+    const sessionCookie = lucia.createBlankSessionCookie();
+    return redirect("/login", {
+      headers: {
+        "Set-Cookie": sessionCookie.serialize(),
+      },
+    });
   }
 
   const formData = await request.formData();
-  const id = params.id;
   const submission = parseWithValibot(formData, { schema });
 
   if (submission.status !== "success") {
@@ -71,18 +73,21 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   await db
-    .update(glossarioTable)
-    .set(submission.value)
-    .where(eq(glossarioTable.id, Number(id)));
+    .update(userTable)
+    .set({
+      ...submission.value,
+      emailVerified: user.email === submission.value.email,
+    })
+    .where(eq(userTable.id, user.id));
 
   return submission.reply();
 }
 
-export default function EditGlossario() {
-  const item = useLoaderData<typeof loader>();
+export default function EditPerfil() {
+  const { user } = useLoaderData<typeof loader>();
   const lastResult = useActionData<typeof action>();
   const [form, fields] = useForm({
-    defaultValue: item,
+    defaultValue: user,
     lastResult,
     constraint: getValibotConstraint(schema),
     onValidate({ formData }) {
@@ -92,7 +97,7 @@ export default function EditGlossario() {
   const navigate = useNavigate();
 
   return (
-    <>
+    <Container title="Editar perfil">
       <Form
         method="post"
         {...getFormProps(form)}
@@ -100,21 +105,17 @@ export default function EditGlossario() {
       >
         <TextInput
           label="Nome"
-          {...getInputProps(fields.name, { type: "text" })}
+          {...getInputProps(fields.displayName, { type: "text" })}
         />
-        <FormErrorMessage errors={fields.name.errors} />
+        <FormErrorMessage errors={fields.displayName.errors} />
         <TextInput
-          label="Definição"
-          {...getInputProps(fields.definition, { type: "text" })}
+          label="Email"
+          autoComplete="email"
+          {...getInputProps(fields.email, { type: "email" })}
         />
-        <FormErrorMessage errors={fields.definition.errors} />
-        <TextInput
-          label="Exemplo"
-          {...getInputProps(fields.example, { type: "text" })}
-        />
-        <FormErrorMessage errors={fields.example.errors} />
+        <FormErrorMessage errors={fields.email.errors} />
         <div className="m-4 flex items-center justify-center gap-2">
-          <SubmitButton>Enviar</SubmitButton>
+          <SubmitButton>Salvar</SubmitButton>
           <button
             type="button"
             className="rounded-full bg-neutral-200 px-6 py-2 text-lg font-bold"
@@ -130,9 +131,9 @@ export default function EditGlossario() {
             "my-4 rounded-xl bg-cyan-100 px-4 py-2 text-base text-cyan-700"
           }
         >
-          Definição atualizada com sucesso.
+          Perfil atualizado com sucesso.
         </p>
       ) : null}
-    </>
+    </Container>
   );
 }

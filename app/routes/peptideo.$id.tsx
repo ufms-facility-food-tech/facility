@@ -1,18 +1,13 @@
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
-import {
-  Link,
-  redirect,
-  useLoaderData,
-  useNavigate,
-  useOutletContext,
-} from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { Link, redirect, useLoaderData, useNavigate } from "@remix-run/react";
 import { eq } from "drizzle-orm";
 import { TbFlaskFilled, TbPencil } from "react-icons/tb";
+import { auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
-import { type User, peptideoTable } from "~/.server/db/schema";
+import { peptideoTable } from "~/.server/db/schema";
 import { Container } from "~/components/container";
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const { id } = params;
   const peptideo = await db.query.peptideoTable.findFirst({
     where: eq(peptideoTable.id, Number(id)),
@@ -43,10 +38,13 @@ export async function loader({ params }: LoaderFunctionArgs) {
     return redirect("/");
   }
 
-  return json(peptideo);
+  const { user } = await auth(request);
+
+  return { peptideoData: peptideo, user };
 }
 
 export default function Peptideo() {
+  const { peptideoData, user } = useLoaderData<typeof loader>();
   const {
     casoSucesso,
     ensaioCelular,
@@ -58,15 +56,13 @@ export default function Peptideo() {
     peptideoToPublicacao,
     funcaoBiologica,
     ...peptideo
-  } = useLoaderData<typeof loader>();
+  } = peptideoData;
   const publicacao = peptideoToPublicacao.map(({ publicacao }) => publicacao);
   const nomePopular = organismo?.organismoToNomePopular.map(
     ({ nomePopular }) => nomePopular,
   );
 
   const navigate = useNavigate();
-
-  const { user } = useOutletContext<{ user: User | null }>();
 
   return (
     <Container>
@@ -263,7 +259,7 @@ export default function Peptideo() {
         </div>
 
         <div className="flex items-center justify-center gap-2">
-          {user && ["admin", "update"].includes(user.role) && (
+          {user?.isAdmin && user?.emailVerified && (
             <Link
               prefetch="intent"
               to={`/peptideo/edit/${peptideo.id}`}

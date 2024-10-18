@@ -1,9 +1,8 @@
-import { rm } from "node:fs";
 import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { eq } from "drizzle-orm";
 import { lucia, auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
-import { imageMetadataTable } from "~/.server/db/schema";
+import { userTable } from "~/.server/db/schema";
 
 export async function action({ params, request }: ActionFunctionArgs) {
   const { session, user } = await auth(request);
@@ -35,29 +34,21 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return json({ message: "Id inválido", ok: false });
   }
 
-  const metadata = await db.query.imageMetadataTable.findFirst({
-    where: eq(imageMetadataTable.id, Number(id)),
-  });
-
-  if (!metadata) {
-    return json({ message: "Imagem não encontrada", ok: false });
+  if (user.id === id) {
+    return json({ message: "Operação inválida", ok: false });
   }
 
-  rm(
-    `${process.env.UPLOAD_DIRECTORY}/images/upload/${metadata.fileName}`,
-    (err) => {
-      if (err) {
-        console.error(err);
-        return json({ message: "Falha ao excluir a imagem", ok: false });
-      }
-    },
-  );
+  const item = await db.query.userTable.findFirst({
+    where: eq(userTable.id, id),
+  });
 
-  await db
-    .delete(imageMetadataTable)
-    .where(eq(imageMetadataTable.id, metadata.id));
+  if (!item) {
+    return json({ message: "Usuário não encontrado", ok: false });
+  }
 
-  return redirect("/admin/fotos");
+  await db.delete(userTable).where(eq(userTable.id, item.id));
+
+  return redirect("/admin/usuarios");
 }
 
 export async function loader() {
