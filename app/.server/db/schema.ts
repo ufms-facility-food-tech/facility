@@ -135,7 +135,9 @@ export const peptideoToPublicacaoRelations = relations(
 export const funcaoBiologicaTable = pgTable("funcao_biologica", {
   id: serial("id").primaryKey(),
   value: text("value").notNull(),
-  peptideoId: integer("peptideo_id").notNull(),
+  peptideoId: integer("peptideo_id")
+    .notNull()
+    .references(() => peptideoTable.id, { onDelete: "cascade" }),
 });
 
 export const funcaoBiologicaRelations = relations(
@@ -151,7 +153,9 @@ export const funcaoBiologicaRelations = relations(
 export const casoSucessoTable = pgTable("caso_sucesso", {
   id: serial("id").primaryKey(),
   value: text("value").notNull(),
-  peptideoId: integer("peptideo_id").notNull(),
+  peptideoId: integer("peptideo_id")
+    .notNull()
+    .references(() => peptideoTable.id, { onDelete: "cascade" }),
 });
 
 export const casoSucessoRelations = relations(casoSucessoTable, ({ one }) => ({
@@ -166,7 +170,9 @@ export const caracteristicasAdicionaisTable = pgTable(
   {
     id: serial("id").primaryKey(),
     value: text("value").notNull(),
-    peptideoId: integer("peptideo_id").notNull(),
+    peptideoId: integer("peptideo_id")
+      .notNull()
+      .references(() => peptideoTable.id, { onDelete: "cascade" }),
   },
 );
 
