@@ -23,7 +23,7 @@ services:
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
     volumes:
-      - ./public/images/upload:/srv/client/images/upload
+      - ./public/images/upload:/srv/public/images/upload
 
   caddy:
     image: caddy:2-alpine
