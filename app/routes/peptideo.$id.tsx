@@ -1,7 +1,12 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, redirect, useLoaderData, useNavigate } from "@remix-run/react";
 import { eq } from "drizzle-orm";
+import type { ReactNode } from "react";
 import { TbFlaskFilled, TbPencil } from "react-icons/tb";
+import ReactMarkdown from "react-markdown";
+import rehypeMathJaxSvg from "rehype-mathjax";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 import { auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { peptideoTable } from "~/.server/db/schema";
@@ -66,17 +71,17 @@ export default function Peptideo() {
 
   return (
     <Container>
-      <div className="my-5 flex flex-col gap-4">
-        {peptideo.descobertaLPPFB ? (
-          <div className="flex w-fit items-center gap-2 rounded-2xl bg-gradient-to-br from-cyan-600 to-cyan-500 py-2 pl-5 pr-4 font-bold text-white">
-            <TbFlaskFilled /> Descoberta do LPPFB
-          </div>
-        ) : null}
-
+      <div className="my-5 flex flex-col gap-4 text-neutral-700">
         <div className="flex flex-col gap-2">
-          <h2 className="border-b-2 border-neutral-100 pb-2 text-2xl font-bold text-cyan-600">
-            Peptídeo
-          </h2>
+          <div className="flex items-center gap-2 border-b-2 border-neutral-100">
+            <h2 className="pb-2 text-4xl font-bold text-cyan-600">Peptídeo</h2>
+            {peptideo.descobertaLPPFB ? (
+              <div className="flex h-min w-fit items-center gap-2 rounded-2xl bg-gradient-to-br from-cyan-600 to-cyan-500 px-3 py-1 font-bold text-white">
+                <TbFlaskFilled /> Descoberta do LPPFB
+              </div>
+            ) : null}
+          </div>
+
           <div className="flex flex-col gap-2 rounded-lg bg-neutral-50 p-4">
             {peptideo.sintetico ? (
               <p className="font-bold text-cyan-600">Sintético</p>
@@ -134,7 +139,7 @@ export default function Peptideo() {
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Sequência
           </h3>
           <p className="mt-2 break-words rounded-lg bg-neutral-50 px-4 py-2">
@@ -143,7 +148,7 @@ export default function Peptideo() {
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Funções biológicas
           </h3>
 
@@ -161,7 +166,7 @@ export default function Peptideo() {
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Casos de sucesso
           </h3>
 
@@ -179,43 +184,47 @@ export default function Peptideo() {
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Ensaio celular
           </h3>
           <p className="mt-2 rounded-lg bg-neutral-50 px-4 py-2">
-            {ensaioCelular ?? "(sem dados)"}
+            <DisplayMarkdown>{ensaioCelular ?? "(sem dados)"}</DisplayMarkdown>
           </p>
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Microbiologia
           </h3>
           <p className="mt-2 rounded-lg bg-neutral-50 px-4 py-2">
-            {microbiologia ?? "(sem dados)"}
+            <DisplayMarkdown>{microbiologia ?? "(sem dados)"}</DisplayMarkdown>
           </p>
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Atividade antifúngica
           </h3>
           <p className="mt-2 rounded-lg bg-neutral-50 px-4 py-2">
-            {atividadeAntifungica ?? "(sem dados)"}
+            <DisplayMarkdown>
+              {atividadeAntifungica ?? "(sem dados)"}
+            </DisplayMarkdown>
           </p>
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Propriedades Físico-Químicas
           </h3>
           <p className="mt-2 rounded-lg bg-neutral-50 px-4 py-2">
-            {propriedadesFisicoQuimicas ?? "(sem dados)"}
+            <DisplayMarkdown>
+              {propriedadesFisicoQuimicas ?? "(sem dados)"}
+            </DisplayMarkdown>
           </p>
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Publicações
           </h3>
           {publicacao.length > 0 ? (
@@ -242,13 +251,13 @@ export default function Peptideo() {
         </div>
 
         <div>
-          <h3 className="border-b-2 border-neutral-100 pb-2 text-xl font-bold text-cyan-600">
+          <h3 className="border-b-2 border-neutral-100 pb-2 text-3xl font-bold text-cyan-600">
             Características adicionais
           </h3>
           {caracteristicasAdicionais.length > 0 ? (
             caracteristicasAdicionais.map(({ id, value }) => (
               <p key={id} className="mt-2 rounded-lg bg-neutral-50 px-4 py-2">
-                {value}
+                <DisplayMarkdown>{value}</DisplayMarkdown>
               </p>
             ))
           ) : (
@@ -278,5 +287,18 @@ export default function Peptideo() {
         </div>
       </div>
     </Container>
+  );
+}
+
+function DisplayMarkdown({ children }: { children: ReactNode }) {
+  return (
+    <div className="prose prose-neutral">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm, remarkMath]}
+        rehypePlugins={[rehypeMathJaxSvg]}
+      >
+        {children}
+      </ReactMarkdown>
+    </div>
   );
 }
