@@ -1,16 +1,17 @@
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import { Link, redirect, useLoaderData, useNavigate } from "@remix-run/react";
 import { eq } from "drizzle-orm";
-import type { ReactNode } from "react";
+import { useMemo } from "react";
 import { TbFlaskFilled, TbPencil } from "react-icons/tb";
 import ReactMarkdown from "react-markdown";
-import rehypeMathJaxSvg from "rehype-mathjax";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { auth } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
 import { peptideoTable } from "~/.server/db/schema";
 import { Container } from "~/components/container";
+import "katex/dist/katex.min.css";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   const { id } = params;
@@ -71,7 +72,7 @@ export default function Peptideo() {
 
   return (
     <Container>
-      <div className="my-5 flex flex-col gap-4 text-neutral-700">
+      <div className="my-5 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 border-b-2 border-neutral-100">
             <h2 className="pb-2 text-4xl font-bold text-cyan-600">Peptídeo</h2>
@@ -290,15 +291,18 @@ export default function Peptideo() {
   );
 }
 
-function DisplayMarkdown({ children }: { children: ReactNode }) {
-  return (
-    <div className="prose prose-neutral">
+function DisplayMarkdown({ children }: { children?: string | null }) {
+  const markdownContent = useMemo(
+    () => (
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
-        rehypePlugins={[rehypeMathJaxSvg]}
+        rehypePlugins={[rehypeKatex]}
       >
         {children}
       </ReactMarkdown>
-    </div>
+    ),
+    [children],
   );
+
+  return <div className="prose prose-facility">{markdownContent}</div>;
 }
