@@ -9,7 +9,6 @@ export default function Pesquisa() {
     { value: "nomePopular", label: "Nome Popular" },
     { value: "origem", label: "Origem" },
     { value: "familia", label: "Família" },
-    { value: "casoSucesso", label: "Casos de Sucesso" },
   ];
 
   const [queryItemName, setQueryItemName] = useState(queryItems[0].value);

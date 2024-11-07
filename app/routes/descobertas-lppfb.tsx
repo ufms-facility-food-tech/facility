@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/.server/db/connection";
@@ -48,7 +47,7 @@ export async function loader() {
       peptideoTable.sequencia,
       organismoTable.nomeCientifico,
     );
-  return json(descobertas);
+  return descobertas;
 }
 
 export default function Resultado() {

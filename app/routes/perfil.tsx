@@ -3,6 +3,7 @@ import { Form, Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { TbShieldCheckFilled, TbShieldFilled, TbShieldX } from "react-icons/tb";
 import { auth } from "~/.server/auth";
 import { Container } from "~/components/container";
+import { useMemo } from "react"; // Import useMemo
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { user } = await auth(request);
@@ -16,6 +17,14 @@ export default function Perfil() {
   const { user } = useLoaderData<typeof loader>();
 
   const fetcher = useFetcher();
+
+  const EmailVerifiedIcon = useMemo(() => {
+    return user.emailVerified ? (
+      <TbShieldCheckFilled className="size-4 self-center text-cyan-600" />
+    ) : (
+      <TbShieldX className="size-4 self-center text-red-800" />
+    );
+  }, [user.emailVerified]);
 
   return (
     <Container title="Perfil">
@@ -39,11 +48,7 @@ export default function Perfil() {
         <span className="justify-self-end font-bold text-cyan-600">
           Email verificado:
         </span>
-        {user.emailVerified ? (
-          <TbShieldCheckFilled className="size-4 self-center text-cyan-600" />
-        ) : (
-          <TbShieldX className="size-4 self-center text-red-800" />
-        )}
+        {EmailVerifiedIcon}
       </div>
       <div className="mx-2 mt-12 flex flex-col items-center justify-center gap-6">
         {!user.emailVerified ? (

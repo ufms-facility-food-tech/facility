@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   TbBrandInstagram,
   TbBrandLinkedin,
@@ -8,6 +9,27 @@ import {
 import { Container } from "~/components/container";
 
 export default function Sobre() {
+  const InstagramIcon = useMemo(
+    () => <TbBrandInstagram size="2.5rem" className="min-w-[2.5rem]" />,
+    [],
+  );
+  const XIcon = useMemo(
+    () => <TbBrandX size="2.5rem" className="min-w-[2.5rem]" />,
+    [],
+  );
+  const LinkedInIcon = useMemo(
+    () => <TbBrandLinkedin size="2.5rem" className="min-w-[2.5rem]" />,
+    [],
+  );
+  const MapPinIcon = useMemo(
+    () => <TbMapPin size="2.5rem" className="min-w-[2.5rem]" />,
+    [],
+  );
+  const MailIcon = useMemo(
+    () => <TbMail size="2.5rem" className="min-w-[2.5rem]" />,
+    [],
+  );
+
   return (
     <Container title="Informações sobre o projeto">
       <div className="flex flex-col gap-4 bg-white py-3 font-sans sm:p-10">
@@ -17,7 +39,7 @@ export default function Sobre() {
         <h2 className="text-xl font-bold">Contato</h2>
         <ul className="flex flex-col gap-5">
           <li className="flex gap-3">
-            <TbBrandInstagram size="2.5rem" className="min-w-[2.5rem]" />
+            {InstagramIcon}
             <div className="flex flex-col justify-center">
               <b>Instagram:</b>
               <a
@@ -31,7 +53,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbBrandX size="2.5rem" className="min-w-[2.5rem]" />
+            {XIcon}
             <div className="flex flex-col justify-center">
               <b>X (anteriormente conhecido como Twitter):</b>
               <a
@@ -45,7 +67,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbBrandLinkedin size="2.5rem" className="min-w-[2.5rem]" />
+            {LinkedInIcon}
             <div className="flex flex-col justify-center">
               <b>LinkedIn:</b>
               <a
@@ -59,7 +81,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbMapPin size="2.5rem" className="min-w-[2.5rem]" />
+            {MapPinIcon}
             <div className="flex flex-col">
               <b>Endereço:</b>
               <p>
@@ -73,7 +95,7 @@ export default function Sobre() {
             </div>
           </li>
           <li className="flex gap-3">
-            <TbMail size="2.5rem" className="min-w-[2.5rem]" />
+            {MailIcon}
             <div className="flex flex-col justify-center">
               <b>Email:</b>
               <a

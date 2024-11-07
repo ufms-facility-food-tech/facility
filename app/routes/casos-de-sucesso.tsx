@@ -1,4 +1,3 @@
-import { json } from "@remix-run/node";
 import { NavLink, useLoaderData } from "@remix-run/react";
 import { db } from "~/.server/db/connection";
 import { Container } from "~/components/container";
@@ -7,28 +6,34 @@ export async function loader() {
   const casosDeSucesso = await db.query.casoSucessoTable.findMany({
     columns: {
       id: true,
-      value: true,
-      peptideoId: true,
+      application: true,
+      manufacturer: true,
+      peptideProduct: true,
     },
     with: {
-      peptideo: {
-        columns: {
-          identificador: true,
-          sintetico: true,
-          palavrasChave: true,
-        },
+      peptideoToCasoSucesso: {
+        columns: {},
         with: {
-          organismo: {
+          peptideo: {
             columns: {
-              nomeCientifico: true,
+              id: true,
+              identificador: true,
+              sintetico: true,
             },
+            with: {
+              organismo: {
+                columns: {
+                  nomeCientifico: true,
+                },
+              },
+            }
           },
         },
-      },
+      }
     },
   });
 
-  return json(casosDeSucesso);
+  return casosDeSucesso;
 }
 
 export default function CasosDeSucesso() {

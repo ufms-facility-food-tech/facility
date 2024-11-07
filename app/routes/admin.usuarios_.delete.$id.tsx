@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { type ActionFunctionArgs, redirect } from "@remix-run/node";
 import { eq } from "drizzle-orm";
 import { auth, lucia } from "~/.server/auth";
 import { db } from "~/.server/db/connection";
@@ -31,11 +31,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const id = params.id;
   if (!id) {
-    return json({ message: "Id inválido", ok: false });
+    return { message: "Id inválido", ok: false };
   }
 
   if (user.id === id) {
-    return json({ message: "Operação inválida", ok: false });
+    return { message: "Operação inválida", ok: false };
   }
 
   const item = await db.query.userTable.findFirst({
@@ -43,7 +43,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
   });
 
   if (!item) {
-    return json({ message: "Usuário não encontrado", ok: false });
+    return { message: "Usuário não encontrado", ok: false };
   }
 
   await db.delete(userTable).where(eq(userTable.id, item.id));

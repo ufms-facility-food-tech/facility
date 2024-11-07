@@ -10,6 +10,7 @@ import {
 } from "react-icons/tb";
 import { auth, lucia } from "~/.server/auth";
 import { Container } from "~/components/container";
+import { useMemo, useCallback, memo, type ReactNode } from "react";
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const { session, user } = await auth(request);
@@ -40,6 +41,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function Admin() {
+  const icons = useMemo(
+    () => ({
+      search: <TbDatabaseSearch />,
+      insert: <TbDatabasePlus />,
+      users: <TbUsersGroup />,
+      photos: <TbLibraryPhoto />,
+      glossary: <TbBook />,
+    }),
+    [],
+  );
+
   return (
     <Container title="Área Administrativa">
       <div className="flex h-full">
@@ -49,27 +61,23 @@ export default function Admin() {
               <AdminNavItem
                 label="Listar registros"
                 route="listar"
-                icon={<TbDatabaseSearch />}
+                icon={icons.search}
               />
               <AdminNavItem
                 label="Inserir registro"
                 route="inserir"
-                icon={<TbDatabasePlus />}
+                icon={icons.insert}
               />
               <AdminNavItem
                 label="Usuários"
                 route="usuarios"
-                icon={<TbUsersGroup />}
+                icon={icons.users}
               />
-              <AdminNavItem
-                label="Fotos"
-                route="fotos"
-                icon={<TbLibraryPhoto />}
-              />
+              <AdminNavItem label="Fotos" route="fotos" icon={icons.photos} />
               <AdminNavItem
                 label="Glossário"
                 route="glossario"
-                icon={<TbBook />}
+                icon={icons.glossary}
               />
             </ul>
           </nav>
@@ -82,27 +90,33 @@ export default function Admin() {
   );
 }
 
-function AdminNavItem({
+const AdminNavItem = memo(function AdminNavItem({
   label,
   route,
   icon,
 }: {
   label: string;
   route: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }) {
+  const iconContextValue = useMemo(() => ({ size: "2rem" }), []);
+  
+  const getClassName = useCallback(
+    ({ isActive }: { isActive: boolean }) =>
+      `${
+        isActive
+          ? "bg-gradient-to-r from-cyan-600 to-cyan-500 text-white"
+          : "bg-neutral-100 text-cyan-600"
+      } flex items-center gap-2 rounded-2xl px-5 py-1 text-center font-bold underline-offset-4 hover:underline`,
+    []
+  );
+
   return (
-    <IconContext.Provider value={{ size: "2rem" }}>
+    <IconContext.Provider value={iconContextValue}>
       <li>
         <NavLink
           prefetch="intent"
-          className={({ isActive }) =>
-            `${
-              isActive
-                ? "bg-gradient-to-r from-cyan-600 to-cyan-500 text-white"
-                : "bg-neutral-100 text-cyan-600"
-            } flex items-center gap-2 rounded-2xl px-5 py-1 text-center font-bold underline-offset-4 hover:underline`
-          }
+          className={getClassName}
           to={route}
         >
           {icon}
@@ -111,4 +125,4 @@ function AdminNavItem({
       </li>
     </IconContext.Provider>
   );
-}
+});

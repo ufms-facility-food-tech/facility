@@ -1,3 +1,4 @@
+import { vite as millionLint } from "@million/lint";
 import { vitePlugin as remix } from "@remix-run/dev";
 import { defineConfig } from "vite";
 
@@ -6,6 +7,9 @@ export default defineConfig({
     target: "es2022",
   },
   plugins: [
+    millionLint({
+      enabled: true,
+    }),
     remix({
       future: {
         v3_fetcherPersist: true,

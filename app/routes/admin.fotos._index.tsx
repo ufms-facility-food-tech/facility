@@ -1,15 +1,28 @@
-import { Form, Link, json, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
+import type { FormEvent } from "react";
 import { TbPencil, TbPhotoPlus, TbTrash } from "react-icons/tb";
 import { db } from "~/.server/db/connection";
 import { imageMetadataTable } from "~/.server/db/schema";
+import { useMemo } from "react";
 
 export async function loader() {
   const images = await db.select().from(imageMetadataTable);
-  return json(images);
+  return images;
 }
 
 export default function Fotos() {
   const images = useLoaderData<typeof loader>();
+
+  const handleDeleteSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const response = confirm("Tem certeza que deseja excluir esta imagem?");
+    if (!response) {
+      event.preventDefault();
+    }
+  };
+
+  const addPhotoIcon = useMemo(() => <TbPhotoPlus size="2rem" />, []);
+  const editIcon = useMemo(() => <TbPencil size="1.5rem" />, []);
+  const deleteIcon = useMemo(() => <TbTrash size="1.5rem" />, []);
 
   return (
     <>
@@ -19,7 +32,7 @@ export default function Fotos() {
           to="upload"
           className="flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 py-2 pl-5 pr-4 text-lg font-bold text-white"
         >
-          Adicionar foto <TbPhotoPlus size="2rem" />
+          Adicionar foto {addPhotoIcon}
         </Link>
       </div>
       <ul className="flex flex-col gap-8">
@@ -63,25 +76,18 @@ export default function Fotos() {
                   to={`edit/${id}`}
                   className="flex w-min items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 py-1 pl-2 pr-4 text-sm font-bold text-white"
                 >
-                  <TbPencil size="1.5rem" /> Editar
+                  {editIcon} Editar
                 </Link>
                 <Form
                   action={`delete/${id}`}
                   method="post"
-                  onSubmit={(event) => {
-                    const response = confirm(
-                      "Tem certeza que deseja excluir esta imagem?",
-                    );
-                    if (!response) {
-                      event.preventDefault();
-                    }
-                  }}
+                  onSubmit={handleDeleteSubmit}
                 >
                   <button
                     type="submit"
                     className="flex w-min items-center gap-2 rounded-full bg-gradient-to-r from-red-800 to-red-700 py-1 pl-2 pr-4 text-sm font-bold text-white"
                   >
-                    <TbTrash size="1.5rem" /> Apagar
+                    {deleteIcon} Apagar
                   </button>
                 </Form>
               </div>

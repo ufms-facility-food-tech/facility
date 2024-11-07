@@ -1,10 +1,9 @@
-import { type LoaderFunctionArgs, json } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 import { NavLink, useLoaderData, useNavigate } from "@remix-run/react";
 import { type SQL, eq, ilike, or, sql } from "drizzle-orm";
 import { TbFlaskFilled } from "react-icons/tb";
 import { db } from "~/.server/db/connection";
 import {
-  casoSucessoTable,
   funcaoBiologicaTable,
   nomePopularTable,
   organismoTable,
@@ -20,7 +19,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const nomeCientifico = searchParams.get("nomeCientifico");
   const origem = searchParams.get("origem");
   const familia = searchParams.get("familia");
-  const casoSucesso = searchParams.get("casoSucesso");
 
   // ilike = case-insensitive like
   // postgres only
@@ -35,7 +33,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
       ilike(organismoTable.nomeCientifico, `%${nomeCientifico}%`),
     !!origem && ilike(organismoTable.origem, `%${origem}%`),
     !!familia && ilike(organismoTable.familia, `%${familia}%`),
-    !!casoSucesso && ilike(casoSucessoTable.value, `%${casoSucesso}%`),
   ].filter((like): like is SQL<unknown> => like !== false);
 
   const results = await db
@@ -55,10 +52,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
       >`array_agg(distinct ${funcaoBiologicaTable.value})`,
     })
     .from(peptideoTable)
-    .leftJoin(
-      casoSucessoTable,
-      eq(peptideoTable.id, casoSucessoTable.peptideoId),
-    )
     .leftJoin(organismoTable, eq(peptideoTable.organismoId, organismoTable.id))
     .leftJoin(
       organismoToNomePopularTable,
@@ -80,7 +73,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       organismoTable.nomeCientifico,
     );
 
-  return json(results);
+  return results;
 }
 
 export default function Resultado() {

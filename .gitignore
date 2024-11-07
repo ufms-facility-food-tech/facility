@@ -11,3 +11,6 @@ node_modules
 
 # image upload
 upload/
+
+# Million Lint
+.million

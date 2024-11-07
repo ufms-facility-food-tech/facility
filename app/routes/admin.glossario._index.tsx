@@ -1,16 +1,26 @@
-import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
+import { memo, useCallback, useMemo, type FormEvent } from "react";
 import { TbPencil, TbTextPlus, TbTrash } from "react-icons/tb";
 import { db } from "~/.server/db/connection";
 import { glossarioTable } from "~/.server/db/schema";
 
 export async function loader() {
   const glossarios = await db.select().from(glossarioTable);
-  return json(glossarios);
+  return glossarios;
 }
 
-export default function Glossario() {
+const Glossario = memo(function Glossario() {
   const glossarios = useLoaderData<typeof loader>();
+
+  const handleDeleteSubmit = useCallback((event: FormEvent) => {
+    const response = confirm("Tem certeza que deseja excluir este item?");
+    if (!response) {
+      event.preventDefault();
+    }
+  }, []);
+
+  const addIcon = useMemo(() => <TbTextPlus size="2rem" />, []);
+  const deleteIcon = useMemo(() => <TbTrash size="1.5rem" />, []);
 
   return (
     <>
@@ -20,7 +30,7 @@ export default function Glossario() {
           to="inserir"
           className="flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-cyan-500 py-2 pl-5 pr-4 text-lg font-bold text-white"
         >
-          Adicionar definição <TbTextPlus size="2rem" />
+          Adicionar definição {addIcon}
         </Link>
       </div>
       <ul className="flex flex-col gap-8">
@@ -45,20 +55,13 @@ export default function Glossario() {
                 <Form
                   action={`delete/${id}`}
                   method="post"
-                  onSubmit={(event) => {
-                    const response = confirm(
-                      "Tem certeza que deseja excluir este item?",
-                    );
-                    if (!response) {
-                      event.preventDefault();
-                    }
-                  }}
+                  onSubmit={handleDeleteSubmit}
                 >
                   <button
                     type="submit"
                     className="flex w-min items-center gap-2 rounded-full bg-gradient-to-r from-red-800 to-red-700 py-1 pl-2 pr-4 text-sm font-bold text-white"
                   >
-                    <TbTrash size="1.5rem" /> Apagar
+                    {deleteIcon} Apagar
                   </button>
                 </Form>
               </div>
@@ -68,4 +71,6 @@ export default function Glossario() {
       </ul>
     </>
   );
-}
+});
+
+export default Glossario;

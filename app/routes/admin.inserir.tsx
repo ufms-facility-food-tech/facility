@@ -43,6 +43,7 @@ import {
   TextAreaInput,
   TextInput,
 } from "~/components/form";
+import { useMemo } from "react"; // Import useMemo
 
 export async function action({ request }: ActionFunctionArgs) {
   const { session } = await auth(request);
@@ -235,7 +236,9 @@ const schema = object({
     array(
       object({
         id: optional(pipe(number(), integer())),
-        value: string(),
+        application: string(),
+        manufacturer: optional(string()),
+        peptideProduct: optional(string()),
       }),
     ),
   ),
@@ -291,6 +294,9 @@ export default function InsertPanel() {
   const casosSucesso = fields.casoSucesso.getFieldList();
   const caracteristicasAdicionais =
     fields.caracteristicasAdicionais.getFieldList();
+
+  // Memoize the TbPlus component
+  const PlusIcon = useMemo(() => <TbPlus />, []);
 
   return (
     <>
@@ -424,7 +430,7 @@ export default function InsertPanel() {
                 })}
                 disabled={fields.sintetico.value === "on"}
               >
-                <TbPlus /> adicionar
+                {PlusIcon} adicionar
               </button>
             </legend>
             <ul className="flex w-full flex-col gap-3">
@@ -469,7 +475,7 @@ export default function InsertPanel() {
                 name: fields.funcaoBiologica.name,
               })}
             >
-              <TbPlus /> adicionar
+              {PlusIcon} adicionar
             </button>
           </legend>
           <ul className="mt-2 flex w-full flex-col gap-3">
@@ -510,7 +516,7 @@ export default function InsertPanel() {
                 name: fields.publicacao.name,
               })}
             >
-              <TbPlus /> adicionar
+              {PlusIcon} adicionar
             </button>
           </legend>
           {publicacao.map((item, index) => {
@@ -559,7 +565,7 @@ export default function InsertPanel() {
                 name: fields.casoSucesso.name,
               })}
             >
-              <TbPlus /> adicionar
+              {PlusIcon} adicionar
             </button>
           </legend>
           <ul className="mt-2 flex w-full flex-col gap-3">
@@ -601,7 +607,7 @@ export default function InsertPanel() {
                 name: fields.caracteristicasAdicionais.name,
               })}
             >
-              <TbPlus /> adicionar
+              {PlusIcon} adicionar
             </button>
           </legend>
           <ul className="mt-2 flex w-full flex-col gap-3">

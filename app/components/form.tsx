@@ -1,6 +1,8 @@
-import type { ComponentProps, ReactNode } from "react";
+import { memo, type ComponentProps, type ReactNode } from "react";
 
-export function SubmitButton({ children }: { children: ReactNode }) {
+export const SubmitButton = memo(function SubmitButton({
+  children,
+}: { children: ReactNode }) {
   return (
     <button
       type="submit"
@@ -9,7 +11,7 @@ export function SubmitButton({ children }: { children: ReactNode }) {
       {children}
     </button>
   );
-}
+});
 
 export function TextInput({
   label,
@@ -57,7 +59,7 @@ export function TextAreaInput({
   );
 }
 
-export function CheckboxInput({
+export const CheckboxInput = memo(function CheckboxInput({
   label,
   ...props
 }: {
@@ -69,7 +71,7 @@ export function CheckboxInput({
       {label}
     </label>
   );
-}
+});
 
 export function SelectInput({
   label,
